@@ -93,6 +93,7 @@ type SignInput struct {
 	Coin         string // 主链币
 	Symbol       string // symbol
 	Amount       int64  //转账数量
+	LargeAmount   string // 转账数量
 	Change       int64  //找零数量
 	Fee          int64  //交易费用
 	GasLimit     int64  // gas数量

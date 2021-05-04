@@ -9,11 +9,11 @@ var (
 	DefaultParams = &chaincfg.MainNetParams
 
 	// master key options
-	DefaultPassword = ""
-	DefaultLanguage = ""
-	DefaultWIF      = ""
-	DefaultMnemonic = ""
-	DefaultSeed     = []byte{}
+	DefaultPassword  = ""
+	DefaultLanguage  = ""
+	DefaultWIF       = ""
+	DefaultMnemonic  = ""
+	DefaultSeed      = []byte{}
 
 	// child key options
 	DefaultPurpose      = ZeroQuote + 44
@@ -31,11 +31,11 @@ type Options struct {
 	Params *chaincfg.Params
 
 	// master key options
-	Mnemonic string
-	Password string
-	Language string
-	Seed     []byte
-	WIF      string
+	Mnemonic  string
+	Password  string
+	Language  string
+	Seed      []byte
+	WIF       string
 
 	// child key options
 	Purpose      uint32

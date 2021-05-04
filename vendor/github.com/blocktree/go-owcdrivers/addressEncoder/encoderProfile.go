@@ -215,4 +215,5 @@ var (
 
 
 	BNB_mainnetAddress = AddressType{"bech32", BTCBech32Alphabet, "bnb", "h160", 20, nil, nil}
+	HTDF_mainnetAddress = AddressType{"bech32", BTCBech32Alphabet, "htdf", "h160", 20, nil, nil}
 )

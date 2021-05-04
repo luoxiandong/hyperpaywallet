@@ -3,12 +3,11 @@ package hdwallet
 import (
 	"crypto/ecdsa"
 	"encoding/hex"
-	"fmt"
-
 	"github.com/btcsuite/btcd/btcec"
 	"github.com/btcsuite/btcd/txscript"
 	"github.com/btcsuite/btcutil"
 	"github.com/btcsuite/btcutil/hdkeychain"
+	"golang.org/x/crypto/ed25519"
 )
 
 // Key struct
@@ -16,15 +15,18 @@ type Key struct {
 	opt      *Options
 	Extended *hdkeychain.ExtendedKey
 
-	Wif      string //for import
-	Mnemonic string //助记词
-	Seed     string //根种子
+	Wif       string //for import
+	Mnemonic  string //助记词
+	Seed      string //根种子
 	// for btc
 	Private *btcec.PrivateKey
 	Public  *btcec.PublicKey
 	// for eth
 	PrivateECDSA *ecdsa.PrivateKey
 	PublicECDSA  *ecdsa.PublicKey
+	// for ada
+	PrivateED25519 *ed25519.PrivateKey
+	PublicED25519  *ed25519.PublicKey
 }
 
 // params: [Mnemonic], [wif]
@@ -63,11 +65,14 @@ func NewKey(opts ...Option) (*Key, error) {
 	case HC:
 		o.Seed = exchangeSeed64BitsTo32(o.Seed)
 		break
+	case ADA:
+		o.Seed = exchangeSeed64BitsTo32(o.Seed)
+		break
 	default:
 		break
 	}
 
-	fmt.Println("masterSeed = ", hex.EncodeToString(o.Seed))
+	//fmt.Println("masterSeed = ", hex.EncodeToString(o.Seed))
 	// if hex.EncodeToString(o.Seed) == "c185e3b00fc010c6d24402694f1f50fe55344b19fc29069a8e279fb5c0313338dab28948d2dc8b41a28658734248e8d649c37ebcca6ec48a69f6d21fe48e7d16" {
 	// 	fmt.Println("seed = ", "相等")
 	// } else {
@@ -80,10 +85,10 @@ func NewKey(opts ...Option) (*Key, error) {
 	}
 
 	key := &Key{
-		opt:      o,
-		Extended: extended,
-		Mnemonic: o.Mnemonic,
-		Seed:     hex.EncodeToString(o.Seed),
+		opt:       o,
+		Extended:  extended,
+		Mnemonic:  o.Mnemonic,
+		Seed:      hex.EncodeToString(o.Seed),
 	}
 
 	err = key.init()
@@ -93,40 +98,7 @@ func NewKey(opts ...Option) (*Key, error) {
 
 	return key, nil
 }
-func NewHCKey(opts ...Option) (*Key, error) {
-	var (
-		err error
-		o   = newOptions(opts...)
-	)
 
-	if len(o.Seed) <= 0 {
-		o.Seed, err = NewSeed(o.Mnemonic, o.Password, o.Language)
-	}
-
-	if err != nil {
-		return nil, err
-	}
-
-	o.Seed = exchangeSeed64BitsTo32(o.Seed)
-	extended, err := hdkeychain.NewMaster(o.Seed, o.Params)
-	if err != nil {
-		return nil, err
-	}
-
-	key := &Key{
-		opt:      o,
-		Extended: extended,
-		Mnemonic: o.Mnemonic,
-		Seed:     hex.EncodeToString(o.Seed),
-	}
-
-	err = key.init()
-	if err != nil {
-		return nil, err
-	}
-
-	return key, nil
-}
 func exchangeSeed64BitsTo32(seed []byte) []byte {
 	if len(seed) != 64 {
 		return seed[:]
@@ -154,6 +126,16 @@ func (k *Key) init() error {
 
 	k.PrivateECDSA = k.Private.ToECDSA()
 	k.PublicECDSA = &k.PrivateECDSA.PublicKey
+
+	switch k.opt.CoinType {
+	case ADA:
+		seeder, _ := hex.DecodeString(k.Seed)
+		private := ed25519.NewKeyFromSeed(seeder)
+		public := private.Public().(ed25519.PublicKey)
+		k.PrivateED25519 = &private
+		k.PublicED25519 = &public
+	}
+
 	return nil
 }
 

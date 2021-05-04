@@ -21,6 +21,12 @@ var (
 		"qtum": hdwallet.QTUM,
 		"dash": hdwallet.DASH,
 		"doge": hdwallet.DOGE,
+		"wicc": hdwallet.WICC,
+		"ada":  hdwallet.ADA,
+		"vsys": hdwallet.VSYS,
+		"bcd":  hdwallet.BCD,
+		"hx":   hdwallet.HX,
+		"trx":  hdwallet.TRX,
 	}
 	feeMap = map[string]uint32{
 		"hc": hdwallet.HC,
@@ -59,7 +65,8 @@ func GenerateSeedWallet(seed string, coin string) *WalletAccount {
 				ErrMsg:  err.Error(),
 			}
 		}
-		wallet, err := master.GetWallet(hdwallet.Seed(seedByte), hdwallet.CoinType(coinType))
+		seed, _ := hex.DecodeString(master.Seed)
+		wallet, err := master.GetWallet(hdwallet.Seed(seed), hdwallet.CoinType(coinType))
 		if err != nil {
 			return &WalletAccount{
 				ResCode: 0,
@@ -281,6 +288,7 @@ func SignRawTransaction(signIn *SignInput) *SignResult {
 			GasLimit:     signIn.GasLimit,
 			GasPrice:     signIn.GasPrice,
 			Amount:       signIn.Amount,
+			LargeAmount:  signIn.LargeAmount,
 			Sequence:     signIn.Sequence, // 序列号
 			Inputs:       signIn.Inputs,
 			Params:       signIn.Params,

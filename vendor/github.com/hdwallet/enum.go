@@ -42,14 +42,18 @@ const (
 	TRX  = ZeroQuote + 195
 	ALGO = ZeroQuote + 283
 	CKB  = ZeroQuote + 309
+	VSYS = ZeroQuote + 360
 
 	AE    = ZeroQuote + 457
 	BNB   = ZeroQuote + 714
 	VET   = ZeroQuote + 818
 	NEO   = ZeroQuote + 888
+	BCD   = ZeroQuote + 999
 	ONT   = ZeroQuote + 1024
 	XTZ   = ZeroQuote + 1729
+	ADA   = ZeroQuote + 1815
 	Libra = ZeroQuote + 9999
+	WICC  = ZeroQuote + 99999
 	WAVES = ZeroQuote + 5741564
 	// btc token
 	USDT = BTCToken + 1
@@ -57,6 +61,8 @@ const (
 	// eth token
 	IOST = ETHToken + 1
 	USDC = ETHToken + 2
+
+	HX = ZeroQuote + 5841564 // 没找到对应参数，此值为虚构
 )
 
 var coinTypes = map[uint32]uint32{
